@@ -1,22 +1,20 @@
 const router = require('express').Router();
-const users = require('../data/users.json');
+const path = require('path');
+
+// eslint-disable-next-line import/no-dynamic-require
+const users = require(path.resolve('data/users.json'));
 
 router.get('/', (req, res) => {
   res.send(users);
 });
 
-function getUserMiddleware(req, res, next) {
+router.get('/:id', (req, res) => {
+  // eslint-disable-next-line no-underscore-dangle
   const user = users.find((u) => u._id === req.params.id);
   if (!user) {
-    return res.status(404).send({ message: 'user not found' });
+    return res.status(404).send({ message: 'Нет пользователя с таким id' });
   }
-  req.user = user;
-  next();
-}
-
-
-router.get('/:id', getUserMiddleware, (req, res) => {
-  res.send(req.user);
+  return res.send(user);
 });
 
 module.exports = router;
