@@ -1,20 +1,41 @@
 const router = require('express').Router();
 const path = require('path');
-
-// eslint-disable-next-line import/no-dynamic-require
-const users = require(path.resolve('data/users.json'));
+const User = require(path.resolve('models/user.js'));
 
 router.get('/', (req, res) => {
-  res.send(users);
+  User.find({})
+      .then(user => res.send({ data: user }))
+      .catch(err => res.status(500).send({ message: 'Произошла ошибка' }));
 });
 
-router.get('/:id', (req, res) => {
-  // eslint-disable-next-line no-underscore-dangle
-  const user = users.find((u) => u._id === req.params.id);
-  if (!user) {
-    return res.status(404).send({ message: 'Нет пользователя с таким id' });
-  }
-  return res.send(user);
+router.get('/:userId', (req, res) => {
+  User.findById(req.params.userId)
+      .then(user => res.send({ data: user }))
+      .catch(err => res.status(500).send({ message: 'Произошла ошибка' }));
+});
+
+router.post('/', (req, res) => {
+  const { name, about, avatar } = req.body;
+
+  User.create({ name, about, avatar })
+      .then(user => res.send({ data: user }))
+      .catch(err => res.status(500).send({ message: 'Произошла ошибка' }));
+});
+
+router.patch('/me', (req, res) => {
+  const { name, about } = req.body;
+
+  User.findByIdAndUpdate(req.user._id, { name, about })
+      .then(user => res.send({ data: user }))
+      .catch(err => res.status(500).send({ message: 'Произошла ошибка' }));
+});
+
+router.patch('/me/avatar', (req, res) => {
+  const { avatar } = req.body;
+
+  User.findByIdAndUpdate(req.user._id, { avatar })
+      .then(user => res.send({ data: user }))
+      .catch(err => res.status(500).send({ message: 'Произошла ошибка' }));
 });
 
 module.exports = router;
