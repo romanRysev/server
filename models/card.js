@@ -1,3 +1,4 @@
+/* eslint-disable no-useless-escape */
 const mongoose = require('mongoose');
 const userSchema = require('./user');
 
@@ -25,7 +26,7 @@ const cardSchema = new mongoose.Schema({
   createdAt: {
     default: Date.now,
     type: Date,
-  }
+  },
 });
 
 module.exports = mongoose.model('card', cardSchema);
