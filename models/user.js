@@ -12,7 +12,6 @@ const userSchema = new mongoose.Schema({
   avatar: {
     type: String,
     required: true,
-    match: /(h|H)tt(p|ps):\/\/(www\.)?(?!(www\.))(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}|[a-zA-Z0-9\.-]+\.[a-zA-Z]+)(:([1-9][0-9]{1,3}))?(\/[a-zA-Z0-9-\/\.]*#?)?/,
   },
 });
 

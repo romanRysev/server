@@ -12,7 +12,6 @@ const cardSchema = new mongoose.Schema({
   link: {
     required: true,
     type: String,
-    match: /(h|H)tt(p|ps):\/\/(www\.)?(?!(www\.))(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}|[a-zA-Z0-9\.-]+\.[a-zA-Z]+)(:([1-9][0-9]{1,3}))?(\/[a-zA-Z0-9-\/\.]*#?)?/,
   },
   owner: {
     type: mongoose.Schema.Types.ObjectId,
