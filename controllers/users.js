@@ -2,6 +2,8 @@
 /* eslint-disable no-unused-vars */
 const path = require('path');
 const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
+const cookieParser = require('cookie-parser');
 // eslint-disable-next-line import/no-dynamic-require
 const User = require(path.resolve('models/user.js'));
 
@@ -26,7 +28,6 @@ module.exports.getUser = (req, res) => {
       }
     });
 };
-
 
 module.exports.createUser = (req, res) => {
   const {
@@ -55,4 +56,30 @@ module.exports.updateUserAvatar = (req, res) => {
   User.findByIdAndUpdate(req.user._id, { avatar }, { new: true, runValidators: true })
     .then((user) => res.send({ data: user }))
     .catch((err) => res.status(500).send({ message: 'Произошла ошибка' }));
+};
+
+module.exports.login = (req, res) => {
+  const { email, password } = req.body;
+  User.findOne({ email })
+    .then((user) => {
+      if (!user) {
+        return Promise.reject(new Error('Неправильные почта или пароль'));
+      }
+      return bcrypt.compare(password, user.password)
+        .then((matched) => {
+          if (!matched) {
+            return Promise.reject(new Error('Неправильные почта или пароль'));
+          }
+          const token = jwt.sign({ _id: user._id }, 'some-secret-key', { expiresIn: '7d' });
+          res.cookie('jwt', token, {
+            maxAge: 3600000 * 24 * 7,
+            httpOnly: true,
+            sameSite: true,
+          })
+            .end();
+        });
+    })
+    .catch((err) => {
+      res.status(401).send({ message: err.message });
+    });
 };
