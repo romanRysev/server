@@ -1,7 +1,7 @@
 const express = require('express');
-// const path = require('path');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
+const cookieParser = require('cookie-parser');
 const router = require('./routes/routes.js');
 
 const { PORT = 3000 } = process.env;
@@ -15,13 +15,8 @@ mongoose.connect('mongodb://localhost:27017/mydb', {
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use((req, res, next) => {
-  req.user = {
-    _id: '5eadce90f0fe833e30f16cfc',
-  };
+app.use(cookieParser());
 
-  next();
-});
 app.use('/', router);
 app.use('/', (req, res) => {
   res.status(404).json({ message: 'Запрашиваемый ресурс не найден' });

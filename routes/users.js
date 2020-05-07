@@ -1,3 +1,4 @@
+/* eslint-disable import/no-dynamic-require */
 const router = require('express').Router();
 const path = require('path');
 
@@ -8,13 +9,14 @@ const {
   updateUser,
   updateUserAvatar,
   login,
-  // eslint-disable-next-line import/no-dynamic-require
 } = require(path.resolve('controllers/users'));
+const auth = require(path.resolve('middlewares/auth'));
 
-router.get('/', getUsers);
-router.get('/:userId', getUser);
 router.post('/signup', createUser);
 router.post('/signin', login);
+router.use(auth);
+router.get('/', getUsers);
+router.get('/:userId', getUser);
 router.patch('/me', updateUser);
 router.patch('/me/avatar', updateUserAvatar);
 

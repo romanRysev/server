@@ -22,15 +22,23 @@ module.exports.createCard = (req, res) => {
 };
 
 module.exports.deleteCard = (req, res) => {
-  Card.findByIdAndRemove(req.params.cardId)
+  Card.findById(req.params.cardId)
     .then((card) => {
       if (!card) { throw new Error('Source not found'); }
       return card;
     })
+    .then((card) => {
+      if (card.owner !== req.user._id) {
+        return Promise.reject(new Error('Ошибка доступа!'));
+      }
+    })
+    .then((card) => Card.deleteOne(card))
     .then((card) => res.send({ data: card }))
     .catch((err) => {
       if (err.name === 'CastError' || err.message === 'Source not found') {
         res.status(404).send({ message: 'Ресурс не найден!' });
+      } else if (err.message === 'Ошибка доступа!') {
+        res.status(401).send({ message: err.message });
       } else {
         res.status(500).send({ message: 'Произошла ошибка' });
       }
