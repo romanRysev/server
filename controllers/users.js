@@ -1,7 +1,7 @@
 /* eslint-disable consistent-return */
 /* eslint-disable no-unused-vars */
 const path = require('path');
-const validator = require('validator');
+const bcrypt = require('bcryptjs');
 // eslint-disable-next-line import/no-dynamic-require
 const User = require(path.resolve('models/user.js'));
 
@@ -29,11 +29,14 @@ module.exports.getUser = (req, res) => {
 
 
 module.exports.createUser = (req, res) => {
-  const { name, about, avatar } = req.body;
-  if (!validator.isURL(avatar)) {
-    return res.status(500).send({ message: 'invalid URL' });
-  }
-  User.create({ name, about, avatar })
+  const {
+    name, about, avatar, email, password,
+  } = req.body;
+
+  bcrypt.hash(password, 10)
+    .then((hash) => User.create({
+      name, about, avatar, email, password: hash,
+    }))
     .then((user) => res.send({ data: user }))
     .catch((err) => res.status(500).send({ message: 'Произошла ошибка' }));
 };
@@ -48,9 +51,7 @@ module.exports.updateUser = (req, res) => {
 
 module.exports.updateUserAvatar = (req, res) => {
   const { avatar } = req.body;
-  if (!validator.isURL(avatar)) {
-    return res.status(500).send({ message: 'invalid URL' });
-  }
+
   User.findByIdAndUpdate(req.user._id, { avatar }, { new: true, runValidators: true })
     .then((user) => res.send({ data: user }))
     .catch((err) => res.status(500).send({ message: 'Произошла ошибка' }));
