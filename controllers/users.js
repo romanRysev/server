@@ -34,6 +34,10 @@ module.exports.createUser = (req, res) => {
     name, about, avatar, email, password,
   } = req.body;
 
+  if (password.length < 8) {
+    return res.status(500).send({ message: 'Пароль слишком короткий!' });
+  }
+
   bcrypt.hash(password, 10)
     .then((hash) => User.create({
       name, about, avatar, email, password: hash,
