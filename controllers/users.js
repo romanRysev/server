@@ -1,10 +1,11 @@
+/* eslint-disable import/no-dynamic-require */
 /* eslint-disable consistent-return */
 /* eslint-disable no-unused-vars */
 const path = require('path');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const cookieParser = require('cookie-parser');
-// eslint-disable-next-line import/no-dynamic-require
+
+const KEY = require(path.resolve('config.js'));
 const User = require(path.resolve('models/user.js'));
 
 module.exports.getUsers = (req, res) => {
@@ -74,7 +75,7 @@ module.exports.login = (req, res) => {
           if (!matched) {
             return Promise.reject(new Error('Неправильные почта или пароль'));
           }
-          const token = jwt.sign({ _id: user._id }, 'some-secret-key', { expiresIn: '7d' });
+          const token = jwt.sign({ _id: user._id }, KEY.KEY, { expiresIn: '7d' });
           res.cookie('jwt', token, {
             maxAge: 3600000 * 24 * 7,
             httpOnly: true,
