@@ -8,26 +8,20 @@ const jwt = require('jsonwebtoken');
 const KEY = require(path.resolve('config.js'));
 const User = require(path.resolve('models/user.js'));
 
-module.exports.getUsers = (req, res) => {
+module.exports.getUsers = (req, res, next) => {
   User.find({})
     .then((user) => res.send({ data: user }))
-    .catch((err) => res.status(500).send({ message: 'Произошла ошибка' }));
+    .catch(next);
 };
 
-module.exports.getUser = (req, res) => {
+module.exports.getUser = (req, res, next) => {
   User.findById(req.params.userId)
     .then((user) => {
       if (!user) { throw new Error('Source not found'); }
       return user;
     })
     .then((user) => res.send({ data: user }))
-    .catch((err) => {
-      if (err.name === 'CastError' || err.message === 'Source not found') {
-        res.status(404).send({ message: 'Ресурс не найден!' });
-      } else {
-        res.status(500).send({ message: 'Произошла ошибка' });
-      }
-    });
+    .catch(next);
 };
 
 module.exports.createUser = (req, res, next) => {
@@ -52,7 +46,7 @@ module.exports.updateUser = (req, res, next) => {
 
   User.findByIdAndUpdate(req.user._id, { name, about }, { new: true, runValidators: true })
     .then((user) => res.send({ data: user }))
-    .catch(next(new Error('Something went wrong...')));
+    .catch(next);
 };
 
 module.exports.updateUserAvatar = (req, res, next) => {
@@ -60,7 +54,7 @@ module.exports.updateUserAvatar = (req, res, next) => {
 
   User.findByIdAndUpdate(req.user._id, { avatar }, { new: true, runValidators: true })
     .then((user) => res.send({ data: user }))
-    .catch(next(new Error('Something went wrong...')));
+    .catch(next);
 };
 
 module.exports.login = (req, res, next) => {
@@ -84,5 +78,5 @@ module.exports.login = (req, res, next) => {
             .end();
         });
     })
-    .catch((err) => next(err));
+    .catch(next);
 };
