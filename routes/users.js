@@ -15,6 +15,7 @@ const {
   updateUser,
   updateUserAvatar,
   login,
+  getMe,
 } = require(path.resolve('controllers/users'));
 const auth = require(path.resolve('middlewares/auth'));
 
@@ -24,6 +25,7 @@ router.use(auth);
 router.get('/', getUsers);
 router.get('/:userId', validateId, getUser);
 router.patch('/me', validateUserUpdate, updateUser);
+router.get('/me', getMe);
 router.patch('/me/avatar', validateAvatar, updateUserAvatar);
 
 module.exports = router;

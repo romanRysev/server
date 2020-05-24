@@ -80,3 +80,13 @@ module.exports.login = (req, res, next) => {
     })
     .catch(next);
 };
+
+module.exports.getMe = (req, res, next) => {
+  User.findById(req.user._id)
+    .then((user) => {
+      if (!user) { throw new Error('Source not found'); }
+      return user;
+    })
+    .then((user) => res.send({ data: user }))
+    .catch(next);
+};
