@@ -15,7 +15,7 @@ module.exports.getUsers = (req, res, next) => {
 };
 
 module.exports.getUser = (req, res, next) => {
-  User.findById(req.params.userId)
+  User.findById(req.params.Id)
     .then((user) => {
       if (!user) { throw new Error('Source not found'); }
       return user;
