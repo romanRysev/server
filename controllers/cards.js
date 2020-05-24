@@ -11,7 +11,7 @@ const UnauthorizedError = require(path.resolve('errors/UnauthorizedError.js'));
 
 module.exports.getCards = (req, res, next) => {
   Card.find({})
-    .then((card) => res.send({ data: card }))
+    .then((card) => { res.set('Access-Control-Allow-Origin', 'http://mesto-app.site'); res.send({ data: card }); })
     .catch(next);
 };
 
