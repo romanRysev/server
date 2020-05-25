@@ -12,11 +12,10 @@ const { requestLogger, errorLogger } = require(path.resolve('./middlewares/logge
 const NotFoundError = require(path.resolve('errors/NotFoundError.js'));
 const error = require(path.resolve('./middlewares/errors.js'));
 
-
-const { PORT = 3000 } = process.env;
+const { PORT = 3000, DATABASE_URL } = require(path.resolve('./config.js'));
 const app = express();
 
-mongoose.connect('mongodb://localhost:27017/mestodb', {
+mongoose.connect(DATABASE_URL, {
   useNewUrlParser: true,
   useCreateIndex: true,
   useFindAndModify: false,
@@ -27,6 +26,11 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(requestLogger);
+app.get('/crash-test', () => {
+  setTimeout(() => {
+    throw new Error('Сервер сейчас упадёт');
+  }, 0);
+});
 app.use('/', router);
 app.use('/', (req, res, next) => { next(new NotFoundError('Page not found!')); });
 app.use(errorLogger);

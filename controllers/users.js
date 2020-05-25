@@ -5,7 +5,7 @@ const path = require('path');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
-const KEY = require(path.resolve('config.js'));
+const config = require(path.resolve('config.js'));
 const User = require(path.resolve('models/user.js'));
 
 module.exports.getUsers = (req, res, next) => {
@@ -69,11 +69,11 @@ module.exports.login = (req, res, next) => {
           if (!matched) {
             throw new Error('Неправильные почта или пароль');
           }
-          const token = jwt.sign({ _id: user._id }, KEY.KEY, { expiresIn: '7d' });
+          const token = jwt.sign({ _id: user._id }, config.JWT_SECRET, { expiresIn: '7d' });
           res.cookie('jwt', token, {
             maxAge: 3600000 * 24 * 7,
             httpOnly: true,
-            //sameSite: true,
+            sameSite: true,
           })
             .end();
         });
