@@ -2,6 +2,8 @@
 
 > server for project Mesto (https://mesto-app.site/)
 
+ver. 1.0.0
+
 ## Build Setup
 
 install MongoDB
