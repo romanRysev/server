@@ -1,5 +1,6 @@
 /* eslint-disable no-useless-escape */
 const mongoose = require('mongoose');
+const validator = require('validator');
 
 const userSchema = new mongoose.Schema({
   name: {
@@ -12,6 +13,28 @@ const userSchema = new mongoose.Schema({
   avatar: {
     type: String,
     required: true,
+    validate: {
+      validator(value) {
+        return validator.isURL(value);
+      },
+      message: (props) => `${props.value} is not a valid url`,
+    },
+  },
+  email: {
+    type: String,
+    required: true,
+    unique: true,
+    validate: {
+      validator(value) {
+        return validator.isEmail(value);
+      },
+      message: (props) => `${props.value} is not a valid email`,
+    },
+  },
+  password: {
+    type: String,
+    required: true,
+    select: false,
   },
 });
 
