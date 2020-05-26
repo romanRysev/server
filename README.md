@@ -1,6 +1,6 @@
 # server
 
-> server for project Mesto (https://mesto-app.site/)
+> server for project Mesto (https://github.com/romanRysev/mesto)
 
 ## Build Setup
 

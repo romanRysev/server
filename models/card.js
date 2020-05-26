@@ -1,6 +1,5 @@
 /* eslint-disable no-useless-escape */
 const mongoose = require('mongoose');
-const validator = require('validator');
 const userSchema = require('./user');
 
 const cardSchema = new mongoose.Schema({
@@ -13,12 +12,6 @@ const cardSchema = new mongoose.Schema({
   link: {
     required: true,
     type: String,
-    validate: {
-      validator(value) {
-        return validator.isURL(value);
-      },
-      message: (props) => `${props.value} is not a valid URL`,
-    },
   },
   owner: {
     type: mongoose.Schema.Types.ObjectId,
