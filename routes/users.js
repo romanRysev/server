@@ -1,30 +1,17 @@
-/* eslint-disable import/no-dynamic-require */
 const router = require('express').Router();
-const path = require('path');
 
-const validateId = require(path.resolve('middlewares/validateId'));
-const validateNewUser = require(path.resolve('middlewares/validateNewUser'));
-const validateLogin = require(path.resolve('middlewares/validateLogin'));
-const validateUserUpdate = require(path.resolve('middlewares/validateUserUpdate'));
-const validateAvatar = require(path.resolve('middlewares/validateAvatar'));
+const validateId = require('../middlewares/validateId');
+const validateUserUpdate = require('../middlewares/validateUserUpdate');
+const validateAvatar = require('../middlewares/validateAvatar');
 
 const {
   getUsers,
   getUser,
-  createUser,
   updateUser,
   updateUserAvatar,
-  login,
-} = require(path.resolve('controllers/users'));
-const auth = require(path.resolve('middlewares/auth'));
+} = require('../controllers/users');
+const auth = require('../middlewares/auth');
 
-router.post('/signup', validateNewUser, createUser);
-router.post('/signin', validateLogin, login);
-router.get('/crash-test', () => {
-  setTimeout(() => {
-    throw new Error('Сервер сейчас упадёт');
-  }, 0);
-});
 router.use(auth);
 router.get('/', getUsers);
 router.get('/:Id', validateId, getUser);

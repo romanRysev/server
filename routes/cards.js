@@ -1,10 +1,9 @@
-/* eslint-disable import/no-dynamic-require */
 const router = require('express').Router();
 const path = require('path');
 
-const auth = require(path.resolve('middlewares/auth'));
-const validateNewCard = require(path.resolve('middlewares/validateNewCard'));
-const validateId = require(path.resolve('middlewares/validateId'));
+const auth = require('../middlewares/auth');
+const validateNewCard = require('../middlewares/validateNewCard');
+const validateId = require('../middlewares/validateId');
 
 const {
   getCards,
@@ -18,8 +17,8 @@ const {
 router.use(auth);
 router.get('/', getCards);
 router.post('/', validateNewCard, createCard);
-router.delete('/:cardId', validateId, deleteCard);
-router.put('/:cardId/likes', validateId, likeCard);
-router.delete('/:cardId/likes', validateId, dislikeCard);
+router.delete('/:dId', validateId, deleteCard);
+router.put('/:Id/likes', validateId, likeCard);
+router.delete('/:Id/likes', validateId, dislikeCard);
 
 module.exports = router;

@@ -1,10 +1,8 @@
-/* eslint-disable import/no-dynamic-require */
 /* eslint-disable consistent-return */
 const jwt = require('jsonwebtoken');
-const path = require('path');
 
-const config = require(path.resolve('config.js'));
-const UnauthorizedError = require(path.resolve('errors/UnauthorizedError.js'));
+const config = require('../config.js');
+const UnauthorizedError = require('../errors/UnauthorizedError.js');
 
 module.exports = (req, res, next) => {
   const token = req.cookies.jwt;

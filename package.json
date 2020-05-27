@@ -1,14 +1,14 @@
 {
   "name": "server",
   "version": "1.0.0",
-  "description": "",
+  "description": "server for Mesto project",
   "main": "app.js",
   "scripts": {
     "dev": "nodemon app.js",
     "start": "node app.js"
   },
   "keywords": [],
-  "author": "",
+  "author": "Roman Rysev",
   "license": "ISC",
   "dependencies": {
     "bcryptjs": "^2.4.3",

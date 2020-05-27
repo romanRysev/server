@@ -1,18 +1,17 @@
-/* eslint-disable import/no-dynamic-require */
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const helmet = require('helmet');
-const path = require('path');
 const { errors } = require('celebrate');
 
-const router = require(path.resolve('./routes/routes.js'));
-const { requestLogger, errorLogger } = require(path.resolve('./middlewares/logger'));
-const NotFoundError = require(path.resolve('errors/NotFoundError.js'));
-const error = require(path.resolve('./middlewares/errors.js'));
+const router = require('./routes/routes.js');
+const { requestLogger, errorLogger } = require('./middlewares/logger');
+const NotFoundError = require('./errors/NotFoundError.js');
+const error = require('./middlewares/errors.js');
 
-const { PORT = 3000, DATABASE_URL } = require(path.resolve('./config.js'));
+const { PORT = 3000, DATABASE_URL } = require('./config.js');
+
 const app = express();
 
 mongoose.connect(DATABASE_URL, {
