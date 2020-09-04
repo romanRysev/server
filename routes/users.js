@@ -1,19 +1,21 @@
 const router = require('express').Router();
-const path = require('path');
+
+const validateId = require('../middlewares/validateId');
+const validateUserUpdate = require('../middlewares/validateUserUpdate');
+const validateAvatar = require('../middlewares/validateAvatar');
 
 const {
   getUsers,
   getUser,
-  createUser,
   updateUser,
   updateUserAvatar,
-  // eslint-disable-next-line import/no-dynamic-require
-} = require(path.resolve('controllers/users'));
+} = require('../controllers/users');
+const auth = require('../middlewares/auth');
 
+router.use(auth);
 router.get('/', getUsers);
-router.get('/:userId', getUser);
-router.post('/', createUser);
-router.patch('/me', updateUser);
-router.patch('/me/avatar', updateUserAvatar);
+router.get('/:Id', validateId, getUser);
+router.patch('/me', validateUserUpdate, updateUser);
+router.patch('/me/avatar', validateAvatar, updateUserAvatar);
 
 module.exports = router;

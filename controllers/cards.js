@@ -1,70 +1,53 @@
-/* eslint-disable consistent-return */
-/* eslint-disable no-unused-vars */
-const path = require('path');
-const validator = require('validator');
-// eslint-disable-next-line import/no-dynamic-require
-const Card = require(path.resolve('models/card.js'));
+const Card = require('../models/card.js');
+const NotFoundError = require('../errors/NotFoundError.js');
+const ForbiddenError = require('../errors/ForbiddenError.js');
 
-module.exports.getCards = (req, res) => {
+
+module.exports.getCards = (req, res, next) => {
   Card.find({})
-    .then((card) => res.send({ data: card }))
-    .catch((err) => res.status(500).send({ message: 'Произошла ошибка' }));
+    .then((card) => { res.send({ data: card }); })
+    .catch(next);
 };
 
-module.exports.createCard = (req, res) => {
+module.exports.createCard = (req, res, next) => {
   const { name, link } = req.body;
-  if (!validator.isURL(link)) {
-    return res.status(500).send({ message: 'invalid URL' });
-  }
   Card.create({ name, link, owner: req.user._id })
     .then((card) => res.send({ data: card }))
-    .catch((err) => res.status(500).send({ message: 'Произошла ошибка' }));
+    .catch(next);
 };
 
-module.exports.deleteCard = (req, res) => {
-  Card.findByIdAndRemove(req.params.cardId)
+module.exports.deleteCard = (req, res, next) => {
+  Card.findById(req.params.Id)
     .then((card) => {
-      if (!card) { throw new Error('Source not found'); }
+      if (!card) { throw new NotFoundError('Source not found'); }
+      return card;
+    })
+    .then((card) => {
+      if (card.owner.toString() !== req.user._id) {
+        throw new ForbiddenError('Forbidden!');
+      }
+    })
+    .then((card) => Card.deleteOne(card))
+    .then(() => res.send({ message: 'Карточка удалена!' }))
+    .catch(next);
+};
+
+module.exports.likeCard = (req, res, next) => {
+  Card.findByIdAndUpdate(req.params.Id, { $addToSet: { likes: req.user._id } }, { new: true })
+    .then((card) => {
+      if (!card) { throw new NotFoundError('Source not found'); }
       return card;
     })
     .then((card) => res.send({ data: card }))
-    .catch((err) => {
-      if (err.name === 'CastError' || err.message === 'Source not found') {
-        res.status(404).send({ message: 'Ресурс не найден!' });
-      } else {
-        res.status(500).send({ message: 'Произошла ошибка' });
-      }
-    });
+    .catch(next);
 };
 
-module.exports.likeCard = (req, res) => {
-  Card.findByIdAndUpdate(req.params.cardId, { $addToSet: { likes: req.user._id } }, { new: true })
+module.exports.dislikeCard = (req, res, next) => {
+  Card.findByIdAndUpdate(req.params.Id, { $pull: { likes: req.user._id } }, { new: true })
     .then((card) => {
-      if (!card) { throw new Error('Source not found'); }
+      if (!card) { throw new NotFoundError('Source not found'); }
       return card;
     })
     .then((card) => res.send({ data: card }))
-    .catch((err) => {
-      if (err.name === 'CastError' || err.message === 'Source not found') {
-        res.status(404).send({ message: 'Ресурс не найден!' });
-      } else {
-        res.status(500).send({ message: 'Произошла ошибка' });
-      }
-    });
-};
-
-module.exports.dislikeCard = (req, res) => {
-  Card.findByIdAndUpdate(req.params.cardId, { $pull: { likes: req.user._id } }, { new: true })
-    .then((card) => {
-      if (!card) { throw new Error('Source not found'); }
-      return card;
-    })
-    .then((card) => res.send({ data: card }))
-    .catch((err) => {
-      if (err.name === 'CastError' || err.message === 'Source not found') {
-        res.status(404).send({ message: 'Ресурс не найден!' });
-      } else {
-        res.status(500).send({ message: 'Произошла ошибка' });
-      }
-    });
+    .catch(next);
 };
